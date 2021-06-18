@@ -17,14 +17,14 @@ class _NativePayExampleState extends State<NativePayExample> {
     StripeNative.setMerchantIdentifier("merchant.rbii.stripe-example");
   }
 
-  Future<String> get receiptPayment async {
+  Future<String?> get receiptPayment async {
     /* custom receipt w/ useReceiptNativePay */
     const receipt = <String, double>{"Nice Hat": 5.00, "Used Hat" : 1.50};
     var aReceipt = Receipt(receipt, "Hat Store");
     return await StripeNative.useReceiptNativePay(aReceipt);
   }
 
-  Future<String> get orderPayment async {
+  Future<String?> get orderPayment async {
     // subtotal, tax, tip, merchant name
     var order = Order(5.50, 1.0, 2.0, "Some Store");
     return await StripeNative.useNativePay(order);

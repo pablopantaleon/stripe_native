@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 class Order {
-  double subtotal;
-  double tax;
-  double tip;
-  String merchantName;
+  double? subtotal;
+  double? tax;
+  double? tip;
+  String? merchantName;
 
   Order(double subtotal, double tax, double tip, String merchantName) {
     this.subtotal = subtotal;
@@ -16,8 +16,8 @@ class Order {
 }
 
 class Receipt {
-  Map<String, double> items;
-  String merchantName;
+  late Map<String, double> items;
+  String? merchantName;
 
   Receipt(Map<String, double> items, String merchantName) {
     this.items = items;
@@ -55,23 +55,23 @@ class StripeNative {
     countryKey = key;
   }
 
-  static Future<String> useNativePay(Order anOrder) async {
+  static Future<String?> useNativePay(Order anOrder) async {
     var orderMap = {
       "subtotal": anOrder.subtotal,
       "tax": anOrder.tax,
       "tip": anOrder.tip,
       "merchantName": anOrder.merchantName
     };
-    final String nativeToken =
+    final String? nativeToken =
         await _channel.invokeMethod('nativePay', orderMap);
     return nativeToken;
   }
 
-  static Future<String> useReceiptNativePay(Receipt aReceipt) async {
+  static Future<String?> useReceiptNativePay(Receipt aReceipt) async {
     var newOrder = Map<String, dynamic>();
     newOrder.addAll(aReceipt.items);
     newOrder.addAll({"merchantName": aReceipt.merchantName});
-    final String nativeToken =
+    final String? nativeToken =
         await _channel.invokeMethod('receiptNativePay', newOrder);
     return nativeToken;
   }

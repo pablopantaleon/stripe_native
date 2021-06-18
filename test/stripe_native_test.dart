@@ -8,15 +8,18 @@ void main() {
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       switch (methodCall.method) {
-        case 'getPlatformVersion': {
-          return '42';
-        }
-        case 'setMerchantIdentifier': {
-          return "merchant.rbii.stripe-example";
-        }
-        case 'launchOrder': {
-          return 1;
-        }
+        case 'getPlatformVersion':
+          {
+            return '42';
+          }
+        case 'setMerchantIdentifier':
+          {
+            return "merchant.rbii.stripe-example";
+          }
+        case 'launchOrder':
+          {
+            return 1;
+          }
       }
     });
   });
@@ -26,13 +29,12 @@ void main() {
   });
 
   test('setMerchantIdentifier', () async {
-    await StripeNative.setMerchantIdentifier("merchant.rbii.stripe-example");
+    StripeNative.setMerchantIdentifier("merchant.rbii.stripe-example");
     expect(StripeNative.merchantIdentifier, "merchant.rbii.stripe-example");
   });
-  
+
   test('setProperCountryCode', () async {
-    await StripeNative.setCountryKey("BR");
+    StripeNative.setCountryKey("BR");
     expect(StripeNative.countryKey, "BR");
   });
-
 }
