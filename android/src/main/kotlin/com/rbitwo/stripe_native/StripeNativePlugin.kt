@@ -174,20 +174,29 @@ class StripeNativePlugin: MethodCallHandler {
       googlePay(result, total, merchantName!!)
 
     } else if (call.method == "nativePay") {
+        println("native-payment: step #1")
       var paymentArgs = call.arguments as Map<String, Any>
       var subtotal = paymentArgs["subtotal"] as? Double
       var tip = paymentArgs["tip"] as? Double
       var tax = paymentArgs["tax"] as? Double
       var merchantName = paymentArgs["merchantName"] as? String
 
+        println("native-payment-subtotal: $subtotal")
+        println("native-payment-tip: $tip")
+        println("native-payment-tax: $tax")
+        println("native-payment-merchantName: $merchantName")
+        println("native-payment-merchantIdentifier: $merchantIdentifier")
+
       if (subtotal == null || tip == null || tax == null || merchantName == null ) {
         result.error("Incorrect payment parameters", "4", null)
         return
       }
 
+        println("native-payment: step #3")
       var total = subtotal!! + tax!! + tip!!
 
       googlePay(result, total, merchantName)
+        println("native-payment: step #4")
 
     } else if (call.method == "confirmPayment") {
       result.success(null)
@@ -198,23 +207,29 @@ class StripeNativePlugin: MethodCallHandler {
 
   private fun googlePay(result: Result, total: Double, name: String) {
     flutterResult = result
+      println("google-pay: step#1")
     val request = IsReadyToPayRequest.newBuilder()
             .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
             .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
             .build()
+      println("google-pay: step#2")
     paymentsClient?.isReadyToPay(request)?.addOnCompleteListener { task ->
+        println("google-pay: is ready to pay 1")
       try {
         val result = task.getResult(ApiException::class.java)!!
+        println("google-pay: result: $result")
         if (result) {
           val request = createPaymentDataRequest(total, name)
+            println("google-pay: request: $request")
 
           if (request == null) {
-            print("Unable to create Google-Pay request")
+            print("google-pay: Unable to create Google-Pay request")
           } else {
 
             paymentTask = paymentsClient?.loadPaymentData(request)
+              println("google-pay: paymentTask: $paymentTask")
             if (paymentTask == null) {
-              print("Unable to create Google_pay payment data")
+              print("google-pay: Unable to create Google_pay payment data")
             } else {
               AutoResolveHelper.resolveTask(
                       paymentTask!!,
@@ -224,10 +239,10 @@ class StripeNativePlugin: MethodCallHandler {
             }
           }
         } else {
-          print("Google Pay is not ready, try calling setMerchantIdentifier first.")
+          print("google-pay: Google Pay is not ready, try calling setMerchantIdentifier first.")
         }
       } catch (exception: ApiException) {
-        print("exception inside ready w/ Google pay: " + exception.statusCode)
+        print("google-pay: exception inside ready w/ Google pay: " + exception.statusCode)
       }
     }
   }
