@@ -392,10 +392,6 @@ public class SwiftStripeNativePlugin: NSObject, FlutterPlugin, PKPaymentAuthoriz
             return
         }
 
-        print("Pablo1!!!!")
-        print(paymentRequest)
-        print(StripeAPI.canSubmitPaymentRequest(paymentRequest))
-
         if StripeAPI.canSubmitPaymentRequest(paymentRequest), let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest) {
             paymentAuthorizationViewController.delegate = self
             UIApplication.shared.keyWindow?.rootViewController?.present(paymentAuthorizationViewController, animated: true)
