@@ -375,24 +375,28 @@ public class SwiftStripeNativePlugin: NSObject, FlutterPlugin, PKPaymentAuthoriz
         
         flutterResult = result
         
-        let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: identifier, country: countryKey, currency: currencyKey)
-        
+        let paymentRequest = StripeAPI.paymentRequest(withMerchantIdentifier: identifier, country: countryKey, currency: currencyKey)
+
         let total = items.reduce(0) { (next, item) -> Double in
             return item.price + next
         }
-        
+
         paymentRequest.paymentSummaryItems = items.map { (item) -> PKPaymentSummaryItem in
             return PKPaymentSummaryItem(label: item.name, amount: NSDecimalNumber(floatLiteral: item.price))
         }
-        
+
         paymentRequest.paymentSummaryItems.append(PKPaymentSummaryItem(label: name, amount: NSDecimalNumber(floatLiteral: total)))
-        
+
         guard isCountryCodeValid(request: paymentRequest) else {
             hand(error: StripeNativeError.CountryKeyIsInvalid(message: "The country key used " + paymentRequest.countryCode + " is invalid"))
             return
         }
-        
-        if Stripe.canSubmitPaymentRequest(paymentRequest), let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest) {
+
+        print("Pablo1!!!!")
+        print(paymentRequest)
+        print(StripeAPI.canSubmitPaymentRequest(paymentRequest))
+
+        if StripeAPI.canSubmitPaymentRequest(paymentRequest), let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest) {
             paymentAuthorizationViewController.delegate = self
             UIApplication.shared.keyWindow?.rootViewController?.present(paymentAuthorizationViewController, animated: true)
         } else {
@@ -405,10 +409,10 @@ public class SwiftStripeNativePlugin: NSObject, FlutterPlugin, PKPaymentAuthoriz
             hand(error: StripeNativeError.MissingMerchantIdentifier(message: "Please call setMerchantIdentifier before using receiptNativePay."))
             return
         }
-        
+
         flutterResult = result
-        
-        let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: identifier, country: countryKey, currency: currencyKey)
+
+        let paymentRequest = StripeAPI.paymentRequest(withMerchantIdentifier: identifier, country: countryKey, currency: currencyKey)
 
         let total = payment.subtotal + payment.tax + payment.tip
 
@@ -418,14 +422,14 @@ public class SwiftStripeNativePlugin: NSObject, FlutterPlugin, PKPaymentAuthoriz
             PKPaymentSummaryItem(label: "Subtotal", amount: NSDecimalNumber(floatLiteral: payment.subtotal)),
             PKPaymentSummaryItem(label: payment.merchantName, amount: NSDecimalNumber(floatLiteral: total)),
         ]
-        
-        
+
+
         guard isCountryCodeValid(request: paymentRequest) else {
             hand(error: StripeNativeError.CountryKeyIsInvalid(message: "The country key used " + paymentRequest.countryCode + " is invalid"))
             return
         }
-        
-        if Stripe.canSubmitPaymentRequest(paymentRequest), let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest) {
+
+        if StripeAPI.canSubmitPaymentRequest(paymentRequest), let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest) {
             paymentAuthorizationViewController.delegate = self
             UIApplication.shared.keyWindow?.rootViewController?.present(paymentAuthorizationViewController, animated: true)
         } else {
