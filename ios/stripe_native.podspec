@@ -18,7 +18,7 @@ Create chargeable stripe tokens using Apple and Google Pay.
   s.dependency 'Stripe', '> 19.0.0'
   s.swift_version = '5.0'
 
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '12.1'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end
 
